@@ -3,7 +3,7 @@ namespace GreetingApp
     using System;
     using GreetingClassLibrary;
 
-    class Greetings
+    public class Greetings
     {
         static void Main(string[] args)
         {
@@ -20,6 +20,7 @@ namespace GreetingApp
             {
                 Console.WriteLine(SharedGreetings.GetGreeting(args[0], args[1]));
             }
+            Console.ReadKey();
         }
     }
 }

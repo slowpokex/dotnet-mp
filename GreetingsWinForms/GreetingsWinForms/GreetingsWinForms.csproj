@@ -79,5 +79,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\GreetingClassLibrary\GreetingClassLibrary\GreetingClassLibrary.csproj">
+      <Project>{8de188cb-ea30-42cd-864d-9f084aaf1f37}</Project>
+      <Name>GreetingClassLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
