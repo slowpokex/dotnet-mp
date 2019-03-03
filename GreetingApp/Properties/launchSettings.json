@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "GreetingApp": {
+      "commandName": "Project",
+      "commandLineArgs": "Mikita 23"
+    }
+  }
+}
