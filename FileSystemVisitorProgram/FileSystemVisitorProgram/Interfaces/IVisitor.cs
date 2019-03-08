@@ -1,10 +1,10 @@
-﻿namespace FileSystemVisitorProgram.Interfaces
+namespace FileSystemVisitorProgram.Interfaces
 {
     using FileSystemVisitorProgram.Models;
     using System.Collections.Generic;
 
-    interface IVisitor
+    public interface IVisitor
     {
-        List<FileSystemItem> GetFileSystemItems();
+        List<IFileSystemItem> GetFileSystemItems();
     }
 }

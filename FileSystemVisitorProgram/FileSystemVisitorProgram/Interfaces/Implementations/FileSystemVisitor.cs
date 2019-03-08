@@ -1,4 +1,4 @@
-﻿namespace FileSystemVisitorProgram
+namespace FileSystemVisitorProgram
 {
     using System;
     using System.Collections.Generic;
@@ -8,7 +8,7 @@
 
     public delegate bool FileItemFilter(string pattern);
 
-    class FileSystemVisitor : IVisitor
+    public class FileSystemVisitor : IVisitor
     {
         private readonly string filepath;
         private readonly FileItemFilter predicate;
@@ -22,20 +22,45 @@
             this.predicate = predicate;
         }
 
-        public List<FileSystemItem> GetFileSystemItems()
+        public IEnumerable<IFileSystemItem> EnumerateFileSystemItems(string path)
         {
-            if (Directory.Exists(filepath))
+            if (!Directory.Exists(path))
             {
-                var directory = Directory.EnumerateFileSystemEntries(filepath);
+                yield break;
+            }
+
+            var directory = Directory.EnumerateFileSystemEntries(path);
+
+            foreach (var file in directory)
+            {
+                var attr = File.GetAttributes(file);
+                IFileSystemItem fileItem;
+                if (attr.HasFlag(FileAttributes.Directory))
+                {
+                    fileItem = new DirectoryItem { Name = file };
+                }
+                else
+                {
+                    fileItem = new FileItem { Name = file };
+                }
+                yield return fileItem;
+            }
+        }
+
+        public List<IFileSystemItem> GetFileSystemItems()
+        {
+            if (Directory.Exists(this.filepath))
+            {
+                var directory = Directory.EnumerateFileSystemEntries(this.filepath);
                 foreach (var file in directory)
                 {
                     Console.WriteLine(file);
                 }
             } else
             {
-                return new List<FileSystemItem>() { };
+                return new List<IFileSystemItem>() { };
             }
-            return new List<FileSystemItem>() { };
+            return new List<IFileSystemItem>() { };
         }
     } 
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +6,14 @@ using System.Threading.Tasks;
 
 namespace FileSystemVisitorProgram.Models
 {
-    class FileItem : FileSystemItem
+    internal class FileItem : IFileSystemItem
     {
         public string Name { get; set; }
+
         public string Metadata { get; set; }
-        public FileSystemItem[] InnerFileEntries { get => new FileSystemItem[] { }; }
+
+        public List<IFileSystemItem> InnerFileEntries { get; }
+
+        public int Level { get; set; }
     }
 }
