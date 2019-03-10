@@ -3,9 +3,6 @@ namespace FileSystemVisitorLib
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
-    using FileSystemVisitorLib.Common;
-    using FileSystemVisitorLib.Enums;
     using FileSystemVisitorLib.FileEventObservers;
 
     public class FileSystemVisitor
@@ -17,7 +14,7 @@ namespace FileSystemVisitorLib
         private readonly Predicate<string> predicate;
 
         public FileSystemVisitor(string filepath) {
-            if (!Directory.Exists(filepath))
+            if (filepath == null || !Directory.Exists(filepath))
             {
                 throw new FileNotFoundException(filepath);
             }
@@ -31,7 +28,7 @@ namespace FileSystemVisitorLib
         public IEnumerable<string> GetFileItems()
         {
             this.fileSystemEventObservable.NextEvent(new Event { EventType = Events.START });
-            foreach (var fileItem in GetAllFilesFromDir(this.filepath))
+            foreach (var fileItem in this.GetAllFilesFromDir(this.filepath))
             {
                 this.fileSystemEventObservable.NextEvent(new Event
                 {
@@ -39,7 +36,7 @@ namespace FileSystemVisitorLib
                     EventData = fileItem
                 });
 
-                if (this.predicate != null && this.predicate(fileItem))
+                if (this.HasTruePredicate(fileItem))
                 {
                     this.fileSystemEventObservable.NextEvent(new Event
                     {
@@ -47,12 +44,17 @@ namespace FileSystemVisitorLib
                         EventData = fileItem
                     });
                 }
-                yield return fileItem;
+                if (this.predicate == null || this.HasTruePredicate(fileItem))
+                {
+                    yield return fileItem;
+                }
             }
             this.fileSystemEventObservable.NextEvent(new Event { EventType = Events.FINISH });
+            this.fileSystemEventObservable.Complete();
         }
 
-        public static IEnumerable<string> GetAllFilesFromDir(string dir) => Directory.EnumerateFiles(dir)
-                .Concat(Directory.EnumerateDirectories(dir).SelectMany(subdir => GetAllFilesFromDir(subdir)));
+        public bool HasTruePredicate(string fileItem) => this.predicate != null && this.predicate(fileItem);
+
+        public IEnumerable<string> GetAllFilesFromDir(string dir) => Directory.GetFileSystemEntries(dir, "*", SearchOption.AllDirectories);
     } 
 }

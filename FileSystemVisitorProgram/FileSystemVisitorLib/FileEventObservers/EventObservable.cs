@@ -1,8 +1,7 @@
-namespace FileSystemVisitorLib.Common
+namespace FileSystemVisitorLib.FileEventObservers
 {
     using System;
     using System.Collections.Generic;
-    using FileSystemVisitorLib.FileEventObservers;
 
     public class EventObservable : IObservable<Event>
     {
@@ -25,6 +24,22 @@ namespace FileSystemVisitorLib.Common
             foreach (var observer in this.observers)
             {
                 observer.OnNext(newEvent);
+            }
+        }
+
+        public void NextError(Exception e)
+        {
+            foreach (var observer in this.observers)
+            {
+                observer.OnError(e);
+            }
+        }
+
+        public void Complete()
+        {
+            foreach (var observer in this.observers)
+            {
+                observer.OnCompleted();
             }
         }
 
