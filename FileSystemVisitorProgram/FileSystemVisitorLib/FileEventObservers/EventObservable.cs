@@ -2,26 +2,35 @@ namespace FileSystemVisitorLib.FileEventObservers
 {
     using System;
     using System.Collections.Generic;
+    using FileSystemVisitorLib.FileEventObservers.Models;
 
-    public class EventObservable : IObservable<Event>
+    public class EventObservable : IEventObservable
     {
-        private readonly List<IObserver<Event>> observers;
+        private readonly List<IObserver<Event>> _observers;
 
-        public EventObservable() => this.observers = new List<IObserver<Event>>();
+        public EventObservable()
+        {
+            _observers = new List<IObserver<Event>>();
+        }
 
         public IDisposable Subscribe(IObserver<Event> observer)
         {
-            if (!this.observers.Contains(observer))
+            if (observer == null)
             {
-                this.observers.Add(observer);
+                throw new ArgumentNullException(nameof(observer));
+            }
+
+            if (!_observers.Contains(observer))
+            {
+                _observers.Add(observer);
             }                
 
-            return new Unsubscriber(this.observers, observer);
+            return new Unsubscriber(_observers, observer);
         }
 
         public void NextEvent(Event newEvent)
         {
-            foreach (var observer in this.observers)
+            foreach (var observer in _observers)
             {
                 observer.OnNext(newEvent);
             }
@@ -29,7 +38,7 @@ namespace FileSystemVisitorLib.FileEventObservers
 
         public void NextError(Exception e)
         {
-            foreach (var observer in this.observers)
+            foreach (var observer in _observers)
             {
                 observer.OnError(e);
             }
@@ -37,7 +46,7 @@ namespace FileSystemVisitorLib.FileEventObservers
 
         public void Complete()
         {
-            foreach (var observer in this.observers)
+            foreach (var observer in _observers)
             {
                 observer.OnCompleted();
             }
@@ -50,15 +59,15 @@ namespace FileSystemVisitorLib.FileEventObservers
 
             public Unsubscriber(List<IObserver<Event>> observers, IObserver<Event> observer)
             {
-                this._observers = observers;
-                this._observer = observer;
+                _observers = observers;
+                _observer = observer;
             }
 
             public void Dispose()
             {
-                if ( this._observer != null)
+                if (_observer != null)
                 {
-                    this._observers.Remove(this._observer);
+                    _observers.Remove(_observer);
                 }    
             }
         }

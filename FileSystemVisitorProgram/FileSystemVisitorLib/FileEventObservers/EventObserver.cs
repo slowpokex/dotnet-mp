@@ -1,21 +1,40 @@
 namespace FileSystemVisitorLib.FileEventObservers
 {
     using System;
+    using FileSystemVisitorLib.FileEventObservers.Models;
 
-    public class EventObserver: IObserver<Event>
+    public class EventObserver: IEventObserver
     {
-        private IDisposable unsubscriber;
+        private IDisposable _unsubscriber;
 
-        public virtual void Subscribe(IObservable<Event> provider) => this.unsubscriber = provider.Subscribe(this);
+        public void Subscribe(IObservable<Event> provider)
+        {
+            if (provider == null)
+            {
+                throw new ArgumentNullException(nameof(provider));
+            }
 
-        public virtual void Unsubscribe() => this.unsubscriber.Dispose();
+            _unsubscriber = provider.Subscribe(this);
+        }
 
-        public bool ShouldInterrupt(string item) => false;
+        public void Unsubscribe()
+        {
+            _unsubscriber.Dispose();
+        }
 
-        public bool ShouldSkip(string item) => item.Contains(".git");
+        public bool ShouldInterrupt(string item)
+        {
+            return false;
+        }
+
+        public bool ShouldSkip(string item)
+        {
+            return item.Contains(".git");
+        }
 
         public void OnNext(Event value)
         {
+            // Provide additional behavior on event
             if (Events.DIRECTORY_FINDED.Equals(value.EventType))
             {
                 
@@ -24,12 +43,12 @@ namespace FileSystemVisitorLib.FileEventObservers
 
         public void OnCompleted()
         {
-
+            // Provide additional behavior on complete
         }
 
         public void OnError(Exception error)
         {
-            
+            // Provide additional behavior on error
         }
     }
 }

@@ -7,19 +7,20 @@ namespace FileSystemVisitorRunner
 {
     internal class Runner
     {
-        private static readonly string EntryPath = "D:/Projects";
+        private static readonly string EntryPath = "D:/Mentoring";
 
         private static void Main(string[] args)
         {
             var fileEventObserver = new EventObserver();
+            var fileEventObservable = new EventObservable();
 
             try
             {
-                var fileSystemVisitor = new FileSystemVisitor(EntryPath, item => item.Contains("dotnet-mp"));
+                var fileSystemVisitor = new FileSystemVisitor(EntryPath, fileEventObservable, item => item.Contains("dotnet-mp"));
 
-                fileEventObserver.Subscribe(fileSystemVisitor.GetFileSystemEventObservable());
+                fileEventObserver.Subscribe(fileSystemVisitor.FileSystemEventObservable);
 
-                foreach (var fileItems in fileSystemVisitor.GetFileItems())
+                foreach (var fileItems in fileSystemVisitor.GetItems())
                 {
                     if (fileEventObserver.ShouldSkip(fileItems))
                     {
@@ -39,6 +40,7 @@ namespace FileSystemVisitorRunner
             finally
             {
                 fileEventObserver.Unsubscribe();
+                fileEventObservable.Complete();
                 Console.ReadKey();
             }
         }

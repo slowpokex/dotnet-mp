@@ -1,4 +1,4 @@
-namespace FileSystemVisitorLib.FileEventObservers
+namespace FileSystemVisitorLib.FileEventObservers.Models
 {
     public enum Events
     {

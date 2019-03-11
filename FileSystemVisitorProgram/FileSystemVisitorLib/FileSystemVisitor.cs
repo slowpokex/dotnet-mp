@@ -4,57 +4,73 @@ namespace FileSystemVisitorLib
     using System.Collections.Generic;
     using System.IO;
     using FileSystemVisitorLib.FileEventObservers;
+    using FileSystemVisitorLib.FileEventObservers.Models;
 
-    public class FileSystemVisitor
+    public class FileSystemVisitor : IVisitor
     {
-        private readonly EventObservable fileSystemEventObservable = new EventObservable();
+        private readonly IEventObservable _fileSystemEventObservable;
 
-        private readonly string filepath;
+        private readonly string _filepath;
 
-        private readonly Predicate<string> predicate;
+        private readonly Predicate<string> _predicate;
 
-        public FileSystemVisitor(string filepath) {
-            if (filepath == null || !Directory.Exists(filepath))
+        public FileSystemVisitor(string filepath, IEventObservable fileSystemEventObservable)
+        {
+            if (string.IsNullOrEmpty(filepath) || !Directory.Exists(filepath))
             {
                 throw new FileNotFoundException(filepath);
             }
-            this.filepath = filepath;
+
+            _fileSystemEventObservable = fileSystemEventObservable;
+            _filepath = filepath;
         }
 
-        public FileSystemVisitor(string filepath, Predicate<string> predicate) : this(filepath) => this.predicate = predicate;
-
-        public EventObservable GetFileSystemEventObservable() => this.fileSystemEventObservable;
-
-        public IEnumerable<string> GetFileItems()
+        public FileSystemVisitor(string filepath, IEventObservable fileSystemEventObservable, Predicate<string> predicate)
+            : this(filepath, fileSystemEventObservable)
         {
-            this.fileSystemEventObservable.NextEvent(new Event { EventType = Events.START });
-            foreach (var fileItem in this.GetAllFilesFromDir(this.filepath))
-            {
-                this.fileSystemEventObservable.NextEvent(new Event
-                {
-                    EventType = Directory.Exists(fileItem) ? Events.DIRECTORY_FINDED : Events.FILE_FINDED,
-                    EventData = fileItem
-                });
+            _predicate = predicate;
+        }
 
-                if (this.HasTruePredicate(fileItem))
-                {
-                    this.fileSystemEventObservable.NextEvent(new Event
+        public IEventObservable FileSystemEventObservable => _fileSystemEventObservable;
+
+        public IEnumerable<string> GetItems()
+        {
+            _fileSystemEventObservable.NextEvent(new Event { EventType = Events.START });
+            foreach (var fileItem in GetAllFilesFromDir(_filepath))
+            {
+                _fileSystemEventObservable.NextEvent(
+                    new Event
                     {
-                        EventType = Directory.Exists(fileItem) ? Events.FILTERED_DIRECTORY_FINDED : Events.FILTERED_FILE_FINDED,
+                        EventType = Directory.Exists(fileItem) ? Events.DIRECTORY_FINDED : Events.FILE_FINDED,
                         EventData = fileItem
                     });
+
+                if (HasTruePredicate(fileItem))
+                {
+                    _fileSystemEventObservable.NextEvent(
+                        new Event
+                        {
+                            EventType = Directory.Exists(fileItem) ? Events.FILTERED_DIRECTORY_FINDED : Events.FILTERED_FILE_FINDED,
+                            EventData = fileItem
+                        });
                 }
-                if (this.predicate == null || this.HasTruePredicate(fileItem))
+                if (this._predicate == null || this.HasTruePredicate(fileItem))
                 {
                     yield return fileItem;
                 }
             }
-            this.fileSystemEventObservable.NextEvent(new Event { EventType = Events.FINISH });
-            this.fileSystemEventObservable.Complete();
+            _fileSystemEventObservable.NextEvent(new Event { EventType = Events.FINISH });
+            _fileSystemEventObservable.Complete();
         }
 
-        public bool HasTruePredicate(string fileItem) => this.predicate != null && this.predicate(fileItem);
+        private bool HasTruePredicate(string fileItem)
+        {
+            return _predicate != null && _predicate(fileItem);
+        }
 
-        public IEnumerable<string> GetAllFilesFromDir(string dir) => Directory.GetFileSystemEntries(dir, "*", SearchOption.AllDirectories);
+        private IEnumerable<string> GetAllFilesFromDir(string dir)
+        {
+            return Directory.GetFileSystemEntries(dir, "*", SearchOption.AllDirectories);
+        }
     } 
 }
