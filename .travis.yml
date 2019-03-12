@@ -1,9 +1,9 @@
-dist: bionic
-sudo: false
 language: csharp
-solution: NumberParserCore/NumberParserCore.sln
 mono: none
-dotnet: 2.2.103
+sudo: required
+dist: xenial
+dotnet: 2.2
+solution: NumberParserCore/NumberParserCore.sln
 install:
   - cd NumberParserCore && dotnet restore
 script:
