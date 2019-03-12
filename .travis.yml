@@ -5,10 +5,10 @@ dist: xenial
 dotnet: 2.2
 solution: NumberParserCore/NumberParserCore.sln
 install:
-  - dotnet restore
+  - cd NumberParserCore && dotnet restore
 script:
-  - dotnet build
-  - dotnet test
+  - cd NumberParserCore && dotnet build
+  - cd NumberParserCore && dotnet test
 after_success:
   - echo dotnet test succeeded
 after_failure:
