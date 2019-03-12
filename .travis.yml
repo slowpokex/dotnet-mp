@@ -1,0 +1,15 @@
+dist: trusty
+sudo: false
+language: csharp
+mono: latest
+dotnet: latest
+install:
+  - cd NumberParserCore/NumberParserCore && dotnet restore
+  - cd NumberParserCore/NumberParserCoreTest && dotnet restore
+script:
+  - cd NumberParserCore/NumberParserCore && dotnet build
+  - cd NumberParserCore/NumberParserCoreTest && dotnet test
+after_success:
+  - echo dotnet test succeeded
+after_failure:
+  - echo dotnet test failed
