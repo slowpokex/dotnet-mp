@@ -1,14 +1,14 @@
 dist: trusty
 sudo: false
 language: csharp
-mono: latest
-dotnet: latest
+solution: NumberParserCore/NumberParserCore.sln
+mono: none
+dotnet: 2.2.103
 install:
-  - cd NumberParserCore/NumberParserCore && dotnet restore
-  - cd NumberParserCore/NumberParserCoreTest && dotnet restore
+  - cd NumberParserCore && dotnet restore
 script:
-  - cd NumberParserCore/NumberParserCore && dotnet build
-  - cd NumberParserCore/NumberParserCoreTest && dotnet test
+  - cd NumberParserCore && dotnet build
+  - cd NumberParserCore && dotnet test
 after_success:
   - echo dotnet test succeeded
 after_failure:
