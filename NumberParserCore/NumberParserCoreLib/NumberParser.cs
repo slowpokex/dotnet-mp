@@ -25,15 +25,15 @@ namespace NumberParserLib
             {
                 if (string.IsNullOrEmpty(number))
                 {
-                    throw new InvalidNumberException("Empty number");
+                    throw new NullReferenceException("Empty number");
                 }
                 var rawData = number.Trim();
-                var hasPositiveSymbol = number[0].Equals('+');
-                var hasNegativeSymbol = number[0].Equals('-');
+                var hasPositiveSymbol = rawData[0].Equals('+');
+                var hasNegativeSymbol = rawData[0].Equals('-');
 
                 if (hasPositiveSymbol || hasNegativeSymbol)
                 {
-                    rawData = rawData.Substring(1, number.Length - 1);
+                    rawData = rawData.Substring(1);
                 }
 
                 var digit = 0;
@@ -56,13 +56,13 @@ namespace NumberParserLib
 
                 return hasNegativeSymbol ? digit * -1 : digit;
             }
-            catch (FormatException e)
+            catch (NullReferenceException e)
+            {
+                throw new InvalidNumberException("Empty number", e);
+            }
+            catch (InvalidCastException e)
             {
                 throw new InvalidNumberException("Wrong number format", e);
-            }
-            catch (OverflowException e)
-            {
-                throw new InvalidNumberException("The current number is overflowed", e);
             }
             catch (Exception e)
             {

@@ -82,5 +82,29 @@ namespace NumberParserTest
             Assert.AreEqual(NumberParser.Parse("99"), 99);
             Assert.AreEqual(NumberParser.Parse("9999"), 9999);
         }
+
+        [TestMethod]
+        public void ShouldParsePositiveNumbersWithWhitespaces()
+        {
+            // Then
+            Assert.AreEqual(NumberParser.Parse("1  "), 1);
+            Assert.AreEqual(NumberParser.Parse("   2"), 2);
+            Assert.AreEqual(NumberParser.Parse("3   "), 3);
+            Assert.AreEqual(NumberParser.Parse("    9"), 9);
+            Assert.AreEqual(NumberParser.Parse("99    "), 99);
+            Assert.AreEqual(NumberParser.Parse("    9999"), 9999);
+        }
+
+        [TestMethod]
+        public void ShouldParseNegativeNumbersWithWhitespaces()
+        {
+            // Then
+            Assert.AreEqual(NumberParser.Parse("-1  "), -1);
+            Assert.AreEqual(NumberParser.Parse("   -2"), -2);
+            Assert.AreEqual(NumberParser.Parse("-3   "), -3);
+            Assert.AreEqual(NumberParser.Parse("    -9"), -9);
+            Assert.AreEqual(NumberParser.Parse("-99    "), -99);
+            Assert.AreEqual(NumberParser.Parse("    -9999"), -9999);
+        }
     }
 }
