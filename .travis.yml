@@ -1,0 +1,15 @@
+language: csharp
+mono: none
+sudo: required
+dist: xenial
+dotnet: 2.2
+solution: NumberParserCore/NumberParserCore.sln
+install:
+  - dotnet restore NumberParserCore
+script:
+  - dotnet build NumberParserCore
+  - dotnet test NumberParserCore
+after_success:
+  - echo dotnet test succeeded
+after_failure:
+  - echo dotnet test failed
