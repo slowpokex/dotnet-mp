@@ -4,6 +4,8 @@ namespace Company.Services
 
     public interface ICustomerQueriesService
     {
-        IEnumerable<decimal> GetTotalOrderMoreThan(int? from);
+        IEnumerable<object> GetTotalOrderMoreThan(int? from);
+        IEnumerable<object> GetCustomerSupplierList();
+        IEnumerable<object> GetCustomerSupplierListWithGrouping();
     }
 }

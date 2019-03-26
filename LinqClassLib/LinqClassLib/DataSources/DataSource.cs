@@ -10,13 +10,15 @@ namespace Company.DataSources
 
     public class DataSource
 	{
+        private static readonly string AppConfigurationFile = "appconfig.json";
+
         private List<Product> productList;
 		private List<Customer> customerList;
 		private List<Supplier> supplierList;
 
         private static IConfiguration Configuration { get; } = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appconfig.json", optional: false, reloadOnChange: true)
+                .AddJsonFile(AppConfigurationFile, optional: false, reloadOnChange: true)
                 .Build();
 
         public List<Product> Products

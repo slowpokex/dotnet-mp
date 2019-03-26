@@ -6,9 +6,9 @@ namespace CustomerClassRunner
     using Company.DataSources;
     using Company.Services;
 
-    class LinqSampleRunner
+    public class LinqSampleRunner
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var dataSource = new DataSource();
             var queryService = new CustomerQueriesService(dataSource);
