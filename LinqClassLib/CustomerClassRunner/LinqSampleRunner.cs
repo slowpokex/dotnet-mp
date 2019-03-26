@@ -1,10 +1,9 @@
 namespace CustomerClassRunner
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using Company.DataSources;
     using Company.Services;
+    using CustomerClassLib.Utils;
 
     public class LinqSampleRunner
     {
@@ -13,17 +12,9 @@ namespace CustomerClassRunner
             var dataSource = new DataSource();
             var queryService = new CustomerQueriesService(dataSource);
 
-            ShowResult(queryService.GetTotalOrderMoreThan(10000));
+            UtilService.ShowResult(queryService.GetCustomersWithIncorrectLocationData());
 
             Console.ReadKey();
-        }
-
-        private static void ShowResult<T>(IEnumerable<T> results)
-        {
-            foreach (var result in results)
-            {
-                Console.WriteLine(result);
-            }
         }
     }
 }

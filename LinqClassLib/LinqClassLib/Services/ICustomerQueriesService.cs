@@ -7,5 +7,6 @@ namespace Company.Services
         IEnumerable<object> GetTotalOrderMoreThan(int? from);
         IEnumerable<object> GetCustomerSupplierList();
         IEnumerable<object> GetCustomerSupplierListWithGrouping();
+        IEnumerable<object> GetCustomersWithIncorrectLocationData();
     }
 }
