@@ -3,6 +3,7 @@ namespace Company.Services
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using Company.Data;
     using Company.DataSources;
     using CustomerClassLib.Utils;
@@ -20,30 +21,84 @@ namespace Company.Services
             _dataSource = dataSource;
         }
 
+
+        // 1
         public IEnumerable<object> GetTotalOrderMoreThan(int? from)
         {
             return _dataSource.Customers
-                .Select(cust => new { Name = cust.CompanyName, Sum = cust.Orders.Select(order => order.Total).Sum() })
+                .Select(cust => new {
+                    Name = cust.CompanyName,
+                    Sum = cust.Orders
+                        .Select(order => order.Total)
+                        .Sum()
+                })
                 .Where(cust => cust.Sum > from);
         }
 
-        public IEnumerable<object> GetCustomerSupplierListWithGrouping()
-        {
-            return _dataSource.Customers
-                .Select(cust => new { Name = cust.CompanyName, Sum = cust.Orders.Select(order => order.Total).Sum() });
-        }
-
+        // 2
         public IEnumerable<object> GetCustomerSupplierList()
         {
             return _dataSource.Customers
-                .Select(cust => new { Name = cust.CompanyName, Sum = cust.Orders.Select(order => order.Total).Sum() });
+                .Select(cust => new {
+                    Name = cust.CompanyName,
+                    Customers = _dataSource.Suppliers
+                    .Where(s => s.Country == cust.Country && s.City == cust.City)
+                    .Select(s => s.SupplierName)
+                    .Aggregate(new StringBuilder(), (ag, n) => ag.Append(n).Append(", "))
+                });
         }
 
+        // 2 with grouping
+        public IEnumerable<object> GetCustomerSupplierListWithGrouping()
+        {
+            return _dataSource.Customers
+                .GroupJoin(_dataSource.Suppliers, c => c.City, s => s.City, (c, s) => new {
+                    Customer = c.CompanyName,
+                    Suppliers = s.Select(sn => sn.SupplierName)
+                                 .Aggregate(new StringBuilder(), (ag, n) => ag.Append(n).Append(", "))
+                });
+        }
+
+        // 3
+        public IEnumerable<object> GetCustomersWithOrderMoreThan(int? from)
+        {
+            return _dataSource.Customers
+                .Where(cust => cust.Orders.Any(o => o.Total >= from))
+                .Select(cust => new {
+                    Name = cust.CompanyName,
+                    TotalOrders = string.Join(", ", cust.Orders.Select(o => o.Total))
+                });
+        }
+
+        // 4
+        public IEnumerable<object> GetCustomersFrom(DateTime date)
+        {
+            return new object[] { };
+        }
+
+        // 6
         public IEnumerable<object> GetCustomersWithIncorrectLocationData()
         {
             return _dataSource.Customers
                 .Where(IsEmptyOrIncorrectCustomerLocationData)
-                .Select(cust => new { Name = cust.CompanyName, Region = cust.Region, postalCode = cust.PostalCode, Phone = cust.Phone });
+                .Select(cust => new {
+                    Name = cust.CompanyName,
+                    Region = cust.Region,
+                    postalCode = cust.PostalCode,
+                    Phone = cust.Phone
+                });
+        }
+
+        // 9
+        public IEnumerable<object> AverageTotalByCities()
+        {
+            return _dataSource.Customers
+                .GroupBy(cust => cust.City)
+                .Select(c => new {
+                    Name = c.Key,
+                    AvgTotal = c.SelectMany(x => x.Orders.Select(o => o.Total)).Average(),
+                    AvgCount = c.Select(x => x.Orders.Length).Average()
+                });
         }
 
         private bool IsEmptyOrIncorrectCustomerLocationData(Customer cust)
