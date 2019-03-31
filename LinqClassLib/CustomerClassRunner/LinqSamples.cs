@@ -1,6 +1,7 @@
 namespace CustomerClassRunner
 {
     using System;
+    using System.Collections.Generic;
     using Company.DataSources;
     using Company.Services;
     using CustomerClassLib.Utils;
@@ -12,29 +13,36 @@ namespace CustomerClassRunner
             var dataSource = new DataSource();
             var queryService = new CustomerQueriesService(dataSource);
 
+            IEnumerable<object> result;
+
             // 1
-            // UtilService.ShowResult(queryService.GetTotalOrderMoreThan(10000));
+            // result = queryService.GetTotalOrderMoreThan(10000);
 
             // 2
-            // UtilService.ShowResult(queryService.GetCustomerSupplierList());
+            // result = queryService.GetCustomerSupplierList();
 
             // 2 with grouping
-            // UtilService.ShowResult(queryService.GetCustomerSupplierListWithGrouping());
+            // result = queryService.GetCustomerSupplierListWithGrouping();
 
             // 3
-            // UtilService.ShowResult(queryService.GetTotalOrderMoreThan(1000));
+            // result = queryService.GetTotalOrderMoreThan(1000);
 
             // 4
-            UtilService.ShowResult(queryService.GetCustomersFrom(new DateTime(1997, 7, 20)));
+            // result = queryService.GetCustomersFrom(new DateTime(1997, 7, 20));
 
             // 5
-            UtilService.ShowResult(queryService.GetCustomersFrom(new DateTime(1997, 7, 20)));
+            // result = queryService.GetCustomersFromWithOrdering(new DateTime(1996, 7, 20));
 
             // 6
-            // UtilService.ShowResult(queryService.GetCustomersWithIncorrectLocationData());
+            // result = queryService.GetCustomersWithIncorrectLocationData();
+
+            // 7
+            result = queryService.GroupProductsByCategory();
 
             // 9
-            // UtilService.ShowResult(queryService.AverageTotalByCities());
+            // result = queryService.AverageTotalByCities()
+
+            UtilService.ShowResult(result);
 
             Console.ReadKey();
         }

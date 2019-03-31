@@ -22,7 +22,6 @@ namespace Company.Services
         }
 
 
-        // 1
         public IEnumerable<object> GetTotalOrderMoreThan(int? from)
         {
             return _dataSource.Customers
@@ -35,7 +34,6 @@ namespace Company.Services
                 .Where(cust => cust.Sum > from);
         }
 
-        // 2
         public IEnumerable<object> GetCustomerSupplierList()
         {
             return _dataSource.Customers
@@ -48,7 +46,6 @@ namespace Company.Services
                 });
         }
 
-        // 2 with grouping
         public IEnumerable<object> GetCustomerSupplierListWithGrouping()
         {
             return _dataSource.Customers
@@ -59,7 +56,6 @@ namespace Company.Services
                 });
         }
 
-        // 3
         public IEnumerable<object> GetCustomersWithOrderMoreThan(int? from)
         {
             return _dataSource.Customers
@@ -70,16 +66,19 @@ namespace Company.Services
                 });
         }
 
-        // 4
         public IEnumerable<object> GetCustomersFrom(DateTime? date)
         {
             return GetCustomersFromPure(date)
-                .Select(x => new { Name = x.CompanyName, FirstPurchaseDate = GetFirstOrderDate(x) });
+                .Select(x => new {
+                    Name = x.CompanyName,
+                    FirstPurchaseDate = GetFirstOrderDate(x)
+                });
         }
 
-        public IEnumerable<Customer> GetCustomersFromPure(DateTime? date)
+        private IEnumerable<Customer> GetCustomersFromPure(DateTime? date)
         {
-            return _dataSource.Customers.Where(x => CheckDateIsGreatFrom(x, date));
+            return _dataSource.Customers
+                .Where(x => CheckDateIsGreatFrom(x, date));
         }
 
         private DateTime? GetFirstOrderDate(Customer cust)
@@ -96,15 +95,19 @@ namespace Company.Services
             return Nullable.Compare(GetFirstOrderDate(cust), date) > 0;
         }
 
-        //5
         public IEnumerable<object> GetCustomersFromWithOrdering(DateTime? date)
         {
             return GetCustomersFromPure(date)
-                .OrderBy(x => x.CompanyName)
-                .ThenBy(x => x);
+                .OrderBy(x => x.Orders.Select(y => y.OrderDate).LastOrDefault())
+                .ThenBy(x => x.Orders.Select(y => y.Total).Sum())
+                .ThenBy(x => x. CompanyName)
+                .Select(x => new {
+                    Name = x.CompanyName,
+                    LastOrder = x.Orders.Select(y => y.OrderDate).LastOrDefault(),
+                    TotalSum = x.Orders.Select(y => y.Total).Sum()
+                });
         }
 
-        // 6
         public IEnumerable<object> GetCustomersWithIncorrectLocationData()
         {
             return _dataSource.Customers
@@ -117,7 +120,25 @@ namespace Company.Services
                 });
         }
 
-        // 9
+        public IEnumerable<object> GroupProductsByCategory()
+        {
+            return _dataSource.Products
+                .GroupBy(x => x.Category)
+                .Select(x => new {
+                    Name = x.Key,
+                    Values = x.GroupBy(y => y.UnitsInStock)
+                                .Select(z => new {
+                                    HasOnStock = z.Key,
+                                    Products = z.OrderBy(a => a.UnitPrice)
+                                })
+                });
+        }
+
+        public IEnumerable<object> GroupProductsByThresholds()
+        {
+            return _dataSource.Products;
+        }
+
         public IEnumerable<object> AverageTotalByCities()
         {
             return _dataSource.Customers
