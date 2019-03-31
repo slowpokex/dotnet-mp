@@ -13,7 +13,7 @@ namespace CustomerClassRunner
             var dataSource = new DataSource();
             var queryService = new CustomerQueriesService(dataSource);
 
-            IEnumerable<object> result;
+            IEnumerable<object> result = null;
 
             // 1
             // result = queryService.GetTotalOrderMoreThan(10000);
@@ -37,7 +37,10 @@ namespace CustomerClassRunner
             // result = queryService.GetCustomersWithIncorrectLocationData();
 
             // 7
-            result = queryService.GroupProductsByCategory();
+            // result = queryService.GroupProductsByCategory();
+
+            // 8
+            result = queryService.GroupProductsByThresholds();
 
             // 9
             // result = queryService.AverageTotalByCities()
