@@ -5,7 +5,7 @@ namespace CustomerClassRunner
     using Company.Services;
     using CustomerClassLib.Utils;
 
-    public class LinqSample
+    public class LinqSamples
     {
         public static void Main(string[] args)
         {
@@ -25,7 +25,10 @@ namespace CustomerClassRunner
             // UtilService.ShowResult(queryService.GetTotalOrderMoreThan(1000));
 
             // 4
-            UtilService.ShowResult(queryService.GetCustomersFrom(new DateTime(2015, 7, 20)));
+            UtilService.ShowResult(queryService.GetCustomersFrom(new DateTime(1997, 7, 20)));
+
+            // 5
+            UtilService.ShowResult(queryService.GetCustomersFrom(new DateTime(1997, 7, 20)));
 
             // 6
             // UtilService.ShowResult(queryService.GetCustomersWithIncorrectLocationData());

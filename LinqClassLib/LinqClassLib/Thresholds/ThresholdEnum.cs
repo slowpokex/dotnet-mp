@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CustomerClassLib.CostThreshold
+namespace CustomerClassLib.Threshold
 {
-    public enum CostThresholdEnum
+    public enum ThresholdEnum
     {
         LowCost,
         AverageCost,

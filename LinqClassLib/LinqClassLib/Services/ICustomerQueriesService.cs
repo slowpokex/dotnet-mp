@@ -18,7 +18,10 @@ namespace Company.Services
         IEnumerable<object> GetCustomersWithOrderMoreThan(int? from);
 
         // 4
-        IEnumerable<object> GetCustomersFrom(DateTime date);
+        IEnumerable<object> GetCustomersFrom(DateTime? date);
+
+        // 5
+        IEnumerable<object> GetCustomersFromWithOrdering(DateTime? date);
 
         // 6
         IEnumerable<object> GetCustomersWithIncorrectLocationData();

@@ -71,9 +71,37 @@ namespace Company.Services
         }
 
         // 4
-        public IEnumerable<object> GetCustomersFrom(DateTime date)
+        public IEnumerable<object> GetCustomersFrom(DateTime? date)
         {
-            return new object[] { };
+            return GetCustomersFromPure(date)
+                .Select(x => new { Name = x.CompanyName, FirstPurchaseDate = GetFirstOrderDate(x) });
+        }
+
+        public IEnumerable<Customer> GetCustomersFromPure(DateTime? date)
+        {
+            return _dataSource.Customers.Where(x => CheckDateIsGreatFrom(x, date));
+        }
+
+        private DateTime? GetFirstOrderDate(Customer cust)
+        {
+            var firstOrderDate = cust.Orders
+                    .OrderBy(d => d.OrderDate)
+                    .FirstOrDefault();
+
+            return firstOrderDate?.OrderDate;
+        }
+
+        private bool CheckDateIsGreatFrom(Customer cust, DateTime? date)
+        {
+            return Nullable.Compare(GetFirstOrderDate(cust), date) > 0;
+        }
+
+        //5
+        public IEnumerable<object> GetCustomersFromWithOrdering(DateTime? date)
+        {
+            return GetCustomersFromPure(date)
+                .OrderBy(x => x.CompanyName)
+                .ThenBy(x => x);
         }
 
         // 6
