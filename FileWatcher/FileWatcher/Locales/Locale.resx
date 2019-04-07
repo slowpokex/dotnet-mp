@@ -117,7 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ExitMessage" xml:space="preserve">
+    <value>The process has been terminated successfully! Press any key...</value>
+  </data>
   <data name="Greeting" xml:space="preserve">
     <value>Hello!</value>
+  </data>
+  <data name="StartWatch" xml:space="preserve">
+    <value>Start service for watching...</value>
+  </data>
+  <data name="WrongSource" xml:space="preserve">
+    <value>Path to source {0} is wrong! The program will exit, press any key...</value>
   </data>
 </root>

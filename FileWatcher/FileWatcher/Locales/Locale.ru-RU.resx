@@ -117,7 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ExitMessage" xml:space="preserve">
+    <value>Приложение завершено успешно! Нажмите любую клавишу...</value>
+  </data>
   <data name="Greeting" xml:space="preserve">
     <value>Привет!</value>
+  </data>
+  <data name="StartWatch" xml:space="preserve">
+    <value>Запуск сервиса для наблюдения...</value>
+  </data>
+  <data name="WrongSource" xml:space="preserve">
+    <value>Путь к источнику папки {0} неверный! Программа завершается, нажмите любую клавишу...</value>
   </data>
 </root>
