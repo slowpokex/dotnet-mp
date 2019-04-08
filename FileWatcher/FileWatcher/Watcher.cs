@@ -1,8 +1,9 @@
 namespace FileWatcher
 {
     using System;
+    using System.Globalization;
     using System.IO;
-    using System.Threading;
+    using System.Text.RegularExpressions;
     using FileWatcher.Configuration;
     using FileWatcher.Locales;
 
@@ -15,42 +16,108 @@ namespace FileWatcher
 
         private static void Run()
         {
-            Console.Write(Locale.StartWatch);
-
+            CultureInfo.CurrentCulture = new CultureInfo(AppConfigurationProvider.GetCurrentLocale());
             Console.CancelKeyPress += new ConsoleCancelEventHandler(ExitHandler);
-            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(AppConfigurationProvider.GetCurrentLocale());
 
-            var watcher = new WatcherBuilder(AppConfigurationProvider.GetSourcePaths())
+            try
+            {
+                var watcher = new WatcherBuilder(AppConfigurationProvider.GetSourcePaths())
+                    // Setup notifiers
+                    .SetNotifyFilter(NotifyFilters.LastAccess)
+                    .SetNotifyFilter(NotifyFilters.LastWrite)
+                    .SetNotifyFilter(NotifyFilters.FileName)
+                    .SetNotifyFilter(NotifyFilters.DirectoryName)
 
-                // Setup notifiers
-                .SetNotifyFilter(NotifyFilters.LastAccess)
-                .SetNotifyFilter(NotifyFilters.LastWrite)
-                .SetNotifyFilter(NotifyFilters.FileName)
-                .SetNotifyFilter(NotifyFilters.DirectoryName)
+                    // With Subdirectories
+                    .IncludeSubdirectories(true)
 
-                // Setup handlers
-                .SetOnCreatedHandler(OnCreated)
-                .SetOnChangedHandler(OnChanged)
-                .SetOnRenamedHandler(OnRenamed)
-                .SetOnDeletedHandler(OnDeleted);
+                    // Setup handlers
+                    .SetOnCreatedHandler(OnCreated)
 
-            while (true){ }
+                    // Start
+                    .StartWatching();
+
+                Console.WriteLine(Locale.StartWatch);
+                while (true) { }
+            }
+            catch (ArgumentNullException e)
+            {
+                Console.WriteLine(Locale.WrongReference, e.Message);
+            }
+            catch (NullReferenceException e)
+            {
+                Console.WriteLine(Locale.WrongParams, e.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(Locale.WrongParams, e.Message);
+            }
+            finally
+            {
+                Console.ReadKey();
+            }
         }
 
         private static void OnCreated(object source, FileSystemEventArgs e)
         {
+            var newFile = e.FullPath;
+            var creationTime = File.GetCreationTime(e.FullPath);
+            var destinationPath = GetDestinationPath(newFile);
+            var destinationFilePath = Path.Combine(destinationPath, GetParticularFileName(Path.GetFileName(newFile)));
+
+            Console.WriteLine(Locale.OnCreated, e.FullPath, creationTime.ToString("dd MMM yyyy hh:mm:ss"));
+
+            if (!Directory.Exists(destinationPath))
+            {
+                Directory.CreateDirectory(destinationPath);
+            }
+
+            if (File.Exists(destinationFilePath))
+            {
+                File.Delete(destinationFilePath);
+            }
+
+            File.Move(newFile, destinationFilePath);
         }
 
-        private static void OnChanged(object source, FileSystemEventArgs e)
+        private static string GetParticularFileName(string file)
         {
+            var patterns = AppConfigurationProvider.GetPatterns();
+            var fileName = Path.GetFileNameWithoutExtension(file);
+            var fileExt = Path.GetExtension(file);
+
+            foreach (var pattern in patterns)
+            {
+                if (Regex.IsMatch(file, pattern.Wildcard, RegexOptions.IgnoreCase))
+                {
+                    var creationTime = pattern.AddDate ? DateTime.Now.ToString("dd_MMM_yyyy_hh:mm:ss") : "";
+                    // var number = pattern.AddNumber ? Random
+                    return string.Concat(fileName, creationTime, fileExt);
+                }
+            }
+
+            return file;
+
         }
 
-        private static void OnRenamed(object source, RenamedEventArgs e)
+        private static string GetDestinationPath(string file)
         {
+            var patterns = AppConfigurationProvider.GetPatterns();
+
+            foreach (var pattern in patterns)
+            {
+                if (Regex.IsMatch(file, pattern.Wildcard, RegexOptions.IgnoreCase))
+                {
+                    return pattern.Destination ?? AppConfigurationProvider.GetDefaultPath();
+                }
+            }
+
+            return AppConfigurationProvider.GetDefaultPath();
         }
 
-        private static void OnDeleted(object source, FileSystemEventArgs e)
+        private static void MoveFile(string sourcePath, string destinationPath)
         {
+
         }
 
         private static void ExitHandler(object sender, ConsoleCancelEventArgs args)

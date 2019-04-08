@@ -123,8 +123,20 @@
   <data name="Greeting" xml:space="preserve">
     <value>Привет!</value>
   </data>
+  <data name="OnCreated" xml:space="preserve">
+    <value>Файл {0} был создан или добавлен в {1}</value>
+  </data>
   <data name="StartWatch" xml:space="preserve">
     <value>Запуск сервиса для наблюдения...</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>Неизвестная ошибка: {0}</value>
+  </data>
+  <data name="WrongParams" xml:space="preserve">
+    <value>Неверные параметры : {0}</value>
+  </data>
+  <data name="WrongReference" xml:space="preserve">
+    <value>Неверная ссылка: {0}</value>
   </data>
   <data name="WrongSource" xml:space="preserve">
     <value>Путь к источнику папки {0} неверный! Программа завершается, нажмите любую клавишу...</value>

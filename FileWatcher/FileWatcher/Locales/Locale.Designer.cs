@@ -79,11 +79,47 @@ namespace FileWatcher.Locales {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на File {0} was created or added at {1}.
+        /// </summary>
+        internal static string OnCreated {
+            get {
+                return ResourceManager.GetString("OnCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Start service for watching....
         /// </summary>
         internal static string StartWatch {
             get {
                 return ResourceManager.GetString("StartWatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Unknown error: {0}.
+        /// </summary>
+        internal static string UnknownError {
+            get {
+                return ResourceManager.GetString("UnknownError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Wrong parameters : {0}.
+        /// </summary>
+        internal static string WrongParams {
+            get {
+                return ResourceManager.GetString("WrongParams", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Wrong reference: {0}.
+        /// </summary>
+        internal static string WrongReference {
+            get {
+                return ResourceManager.GetString("WrongReference", resourceCulture);
             }
         }
         

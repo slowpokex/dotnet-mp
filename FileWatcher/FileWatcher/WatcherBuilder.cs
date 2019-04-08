@@ -19,12 +19,10 @@ namespace FileWatcher
 
             foreach (var path in sources)
             {
-                if (!Directory.Exists(path))
+                if (Directory.Exists(path))
                 {
-                    continue;
+                    _watchers.Add(new FileSystemWatcher { Path = path });
                 }
-
-                _watchers.Add(new FileSystemWatcher { Path = path });
             }
         }
 
@@ -98,9 +96,29 @@ namespace FileWatcher
             return this;
         }
 
-        public List<FileSystemWatcher> GetWatchers()
+        public WatcherBuilder IncludeSubdirectories(bool include)
         {
-            return _watchers;
+            foreach (var watcher in _watchers)
+            {
+                watcher.IncludeSubdirectories = include;
+            }
+
+            return this;
+        }
+
+        public WatcherBuilder StartWatching()
+        {
+            if (_watchers == null)
+            {
+                throw new NullReferenceException(nameof(_watchers));
+            }
+
+            foreach (var watcher in _watchers)
+            {
+                watcher.EnableRaisingEvents = true;
+            }
+
+            return this;
         }
     }
 }

@@ -123,8 +123,20 @@
   <data name="Greeting" xml:space="preserve">
     <value>Hello!</value>
   </data>
+  <data name="OnCreated" xml:space="preserve">
+    <value>File {0} was created or added at {1}</value>
+  </data>
   <data name="StartWatch" xml:space="preserve">
     <value>Start service for watching...</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>Unknown error: {0}</value>
+  </data>
+  <data name="WrongParams" xml:space="preserve">
+    <value>Wrong parameters : {0}</value>
+  </data>
+  <data name="WrongReference" xml:space="preserve">
+    <value>Wrong reference: {0}</value>
   </data>
   <data name="WrongSource" xml:space="preserve">
     <value>Path to source {0} is wrong! The program will exit, press any key...</value>

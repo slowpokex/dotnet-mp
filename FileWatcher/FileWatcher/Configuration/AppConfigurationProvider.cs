@@ -58,6 +58,11 @@ namespace FileWatcher.Configuration
                 .Select(x => x.Value);
         }
 
+        public static string GetDefaultPath()
+        {
+            return _instance._configuration["DefaultPath"];
+        }
+
         public static IEnumerable<Pattern> GetPatterns()
         {
             InitConfiguration();

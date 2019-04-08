@@ -10,6 +10,6 @@ script:
   - dotnet build NumberParserCore
   - dotnet test NumberParserCore
 after_success:
-  - echo dotnet test succeeded
+  - echo dotnet test succeeded 
 after_failure:
   - echo dotnet test failed
