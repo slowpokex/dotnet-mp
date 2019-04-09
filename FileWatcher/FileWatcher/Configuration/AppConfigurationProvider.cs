@@ -6,7 +6,6 @@ namespace FileWatcher.Configuration
     using System.Linq;
     using FileWatcher.Models;
     using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Configuration.Binder;
 
     public class AppConfigurationProvider
     {

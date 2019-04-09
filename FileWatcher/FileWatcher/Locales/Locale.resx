@@ -120,11 +120,17 @@
   <data name="ExitMessage" xml:space="preserve">
     <value>The process has been terminated successfully! Press any key...</value>
   </data>
+  <data name="FileMoved" xml:space="preserve">
+    <value>File {0} is moved to {1}</value>
+  </data>
   <data name="Greeting" xml:space="preserve">
     <value>Hello!</value>
   </data>
   <data name="OnCreated" xml:space="preserve">
     <value>File {0} was created or added at {1}</value>
+  </data>
+  <data name="PatternFind" xml:space="preserve">
+    <value>File {0} is found by pattern {1}</value>
   </data>
   <data name="StartWatch" xml:space="preserve">
     <value>Start service for watching...</value>

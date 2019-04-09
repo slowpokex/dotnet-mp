@@ -70,6 +70,15 @@ namespace FileWatcher.Locales {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на File {0} is moved to {1}.
+        /// </summary>
+        internal static string FileMoved {
+            get {
+                return ResourceManager.GetString("FileMoved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Hello!.
         /// </summary>
         internal static string Greeting {
@@ -84,6 +93,15 @@ namespace FileWatcher.Locales {
         internal static string OnCreated {
             get {
                 return ResourceManager.GetString("OnCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на File {0} is found by pattern {1}.
+        /// </summary>
+        internal static string PatternFind {
+            get {
+                return ResourceManager.GetString("PatternFind", resourceCulture);
             }
         }
         

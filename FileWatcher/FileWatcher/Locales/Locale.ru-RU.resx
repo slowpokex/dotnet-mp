@@ -120,11 +120,17 @@
   <data name="ExitMessage" xml:space="preserve">
     <value>Приложение завершено успешно! Нажмите любую клавишу...</value>
   </data>
+  <data name="FileMoved" xml:space="preserve">
+    <value>Файл {0} перемещен в {1}</value>
+  </data>
   <data name="Greeting" xml:space="preserve">
     <value>Привет!</value>
   </data>
   <data name="OnCreated" xml:space="preserve">
     <value>Файл {0} был создан или добавлен в {1}</value>
+  </data>
+  <data name="PatternFind" xml:space="preserve">
+    <value>Файл {0} найден по шаблону {1}</value>
   </data>
   <data name="StartWatch" xml:space="preserve">
     <value>Запуск сервиса для наблюдения...</value>
