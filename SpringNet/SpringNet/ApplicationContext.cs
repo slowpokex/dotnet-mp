@@ -26,8 +26,16 @@ namespace SpringNet
 
             foreach (var c in configurations)
             {
-                _configurations.Add(c, Activator.CreateInstance(c));
+                var instance = Convert.ChangeType(Activator.CreateInstance(c), c);
+                _configurations.Add(c, instance);
+                var beans = c.GetMethods().Select(x => x.Invoke(instance, null));
+                foreach (var bean in beans)
+                {
+                    Console.WriteLine(bean);
+                }
             }
+
+
         }
 
         public object GetBean(string beanName)
