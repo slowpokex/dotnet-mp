@@ -1,5 +1,6 @@
 namespace SpringNetDemo.Configuration
 {
+    using System.Collections.Generic;
     using global::SpringNetDemo.Entity;
     using global::SpringNetDemo.Repositories;
     using SpringNet.Attributes;
@@ -7,16 +8,41 @@ namespace SpringNetDemo.Configuration
     [Configuration]
     public class AppConfiguration
     {
-        [Bean("mainUser")]
+        [Bean("MainUser")]
         public User GetMainUser()
         {
-            return new User();
+            return new User {
+                Login = "ROOT",
+                UserRole = UserRole.SUPER_ADMIN
+            };
         }
 
-        [Bean("userRepository")]
-        public UserRepository GetUserRepository()
+        [Bean("AllUsers")]
+        public IEnumerable<User> GetAllUsers()
         {
-            return new UserRepository();
+            return new List<User>
+            {
+                new User {
+                    Login = "harley26",
+                    UserRole = UserRole.ADMIN
+                },
+                new User {
+                    Login = "valakas",
+                    UserRole = UserRole.ADMIN
+                },
+                new User {
+                    Login = "lotysh",
+                    UserRole = UserRole.MODERATOR
+                },
+                new User {
+                    Login = "veracsich",
+                    UserRole = UserRole.GUEST
+                },
+                new User {
+                    Login = "valera",
+                    UserRole = UserRole.GUEST
+                }
+            };
         }
     }
 }
