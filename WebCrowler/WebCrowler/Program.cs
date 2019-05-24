@@ -1,75 +1,98 @@
 namespace WebCrawler
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
     using HtmlAgilityPack;
     using WebCrawler.Configuration;
-    using WebCrawler.Models;
+    using WebCrawler.Helpers;
 
     public class Program
     {
         public static void Main(string[] args)
         {
-            var handler = new HttpClientHandler
-            {
-                MaxConnectionsPerServer = AppConfigurationProvider.GetMaxConnectionsPerServer()
-            };
-
-            var client = new HttpClient(handler);
-
-            Start(
-                AppConfigurationProvider.GetUrl(),
-                AppConfigurationProvider.GetDepth()
-            );
+            Start(args)
+                .ConfigureAwait(false)
+                .GetAwaiter()
+                .GetResult();
 
             Console.ReadLine();
         }
 
-        private static void Start(string url, int depth)
+        private async static Task Start(string[] args)
         {
-            if (string.IsNullOrEmpty(url))
+            var httpClient = new HttpClient();
+            var linkList = new List<string>();
+            var levels = AppConfigurationProvider.GetDepth();
+            var resourcesList = new List<string>();
+
+            await LoadDocument(
+                httpClient,
+                new List<string>() {
+                    AppConfigurationProvider.GetUrl()
+                },
+                linkList,
+                resourcesList,
+                levels,
+                levels
+            );
+
+            Console.WriteLine(resourcesList);
+        }
+
+        private async static Task LoadDocument(HttpClient client, List<string> urls, List<string> links, List<string> resourcesList, int fullDepth, int depth)
+        {
+            if (urls == null || urls.Count == 0 || depth < 0)
             {
                 return;
             }
 
-            var levels = Enumerable.Range(0, depth + 1);
+            Console.WriteLine($"Level {fullDepth - depth}");
 
-            foreach (var level in levels)
+            var nextLinks = new List<string>();
+
+            foreach (var url in urls)
             {
-                Console.WriteLine(level);
+                Console.WriteLine($"Url {url}");
+
+                var response = await client.GetAsync(url);
+                var pageContents = await response.Content.ReadAsStringAsync();
+                var pageDocument = new HtmlDocument();
+
+                pageDocument.LoadHtml(pageContents);
+
+                var images = pageDocument.DocumentNode.Descendants("img")
+                                .Select(a => Utils.GetUrl(a, "src", url))
+                                .Where(u => Utils.IsValidURL(u))
+                                .Distinct();
+
+                var scripts = pageDocument.DocumentNode.Descendants("script")
+                                .Select(a => Utils.GetUrl(a, "src", url))
+                                .Where(u => Utils.IsValidURL(u))
+                                .Distinct();
+
+                var styles = pageDocument.DocumentNode.Descendants("link")
+                                .Select(a => Utils.GetUrl(a, "href", url))
+                                .Where(u => Utils.IsValidURL(u))
+                                .Distinct();
+
+                var hrefLinks = pageDocument.DocumentNode.Descendants("a")
+                                                  .Select(a => Utils.GetUrl(a, "href", url))
+                                                  .Where(u => Utils.IsValidURL(u))
+                                                  .Distinct();
+
+                nextLinks.AddRange(hrefLinks);
+
+                var resources = images
+                    .Concat(scripts);
+                    // .Concat(styles);
+
+                resourcesList.AddRange(resources);
             }
-        }
 
-        private static HtmlPage GetPageFromUrl(string url)
-        {
-            if (string.IsNullOrEmpty(url))
-            {
-                return null;
-            }
-
-            var page = new HtmlPage();
-
-            return page;
-        }
-
-        private static HtmlDocument GetDocumentFromUrl(string url)
-        {
-            if (string.IsNullOrEmpty(url))
-            {
-                return null;
-            }
-
-            var page = new HtmlWeb();
-
-            return page.Load(url);
-        }
-
-        private static async Task SendRequest(HttpClient client, string url)
-        {
-            var response = await client.GetAsync(url);
-            Console.WriteLine($"Received response {response.StatusCode} from {url}");
+            await LoadDocument(client, nextLinks, links, resourcesList, fullDepth, depth - 1);
         }
     }
 }
