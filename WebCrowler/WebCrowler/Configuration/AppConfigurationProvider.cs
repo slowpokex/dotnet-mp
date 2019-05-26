@@ -5,9 +5,12 @@ namespace WebCrawler.Configuration
     using System.IO;
     using System.Linq;
     using Microsoft.Extensions.Configuration;
+    using NLog;
 
     public class AppConfigurationProvider
     {
+        private static readonly ILogger _logger = LogManager.GetCurrentClassLogger();
+
         private static AppConfigurationProvider _instance;
 
         private readonly IConfiguration _configuration;
@@ -16,6 +19,8 @@ namespace WebCrawler.Configuration
 
         private AppConfigurationProvider()
         {
+            _logger.Debug("Initialize AppConfigurationProvider");
+
             _configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -24,6 +29,8 @@ namespace WebCrawler.Configuration
 
         private static void InitConfiguration()
         {
+            _logger.Debug("Start initializing AppConfigurationProvider");
+
             if (_instance == null)
             {
                 lock (syncRoot)
@@ -38,32 +45,44 @@ namespace WebCrawler.Configuration
 
         public static int GetMaxConnectionsPerServer()
         {
+            _logger.Debug("Get MaxConnectionsPerServer param");
+
             return GetIntParam("MaxConnectionsPerServer");
         }
 
         public static int GetDepth()
         {
+            _logger.Debug("Get Depth param");
+
             return GetIntParam("Depth");
         }
 
         public static string GetUrl()
         {
+            _logger.Debug("Get Url param");
+
             return GetStringParam("Url");
         }
 
         public static string GetDestination()
         {
+            _logger.Debug("Get Destination param");
+
             return GetStringParam("Destination");
         }
 
         public static string GetAllowExternal()
         {
+            _logger.Debug("Get AllowExternal param");
+
             return GetStringParam("AllowExternal");
         }
 
         public static IEnumerable<string> GetExtentions()
         {
             InitConfiguration();
+
+            _logger.Debug("Get Extentions param");
 
             return _instance._configuration
                 .GetSection("Extentions")
