@@ -1,7 +1,9 @@
 namespace WebCrawler.Configuration
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using Microsoft.Extensions.Configuration;
 
     public class AppConfigurationProvider
@@ -49,6 +51,26 @@ namespace WebCrawler.Configuration
             return GetStringParam("Url");
         }
 
+        public static string GetDestination()
+        {
+            return GetStringParam("Destination");
+        }
+
+        public static string GetAllowExternal()
+        {
+            return GetStringParam("AllowExternal");
+        }
+
+        public static IEnumerable<string> GetExtentions()
+        {
+            InitConfiguration();
+
+            return _instance._configuration
+                .GetSection("Extentions")
+                .GetChildren()
+                .Select(x => x.Value);
+        }
+
         private static int GetIntParam(string param)
         {
             if (string.IsNullOrEmpty(param))
@@ -75,6 +97,20 @@ namespace WebCrawler.Configuration
             var value = _instance._configuration[param];
 
             return value ?? "";
+        }
+
+        private static bool GetBoolParam(string param)
+        {
+            if (string.IsNullOrEmpty(param))
+            {
+                return false;
+            }
+
+            InitConfiguration();
+
+            var value = _instance._configuration[param];
+
+            return bool.Parse(value);
         }
     }
 }
